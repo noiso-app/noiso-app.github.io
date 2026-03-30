@@ -175,9 +175,23 @@ const nextPresetButton = document.getElementById("nextPresetButton");
 const presetStatus = document.getElementById("presetStatus");
 const playbackStatus = document.getElementById("playbackStatus");
 const preloadedAudio = new Map();
+const AudioContextClass = window.AudioContext || window.webkitAudioContext || null;
+const supportsPointerEvents = "PointerEvent" in window;
+
+const isAppleMobileSafari = (() => {
+    const userAgent = navigator.userAgent || "";
+    return (
+        /iP(hone|ad|od)/.test(userAgent) &&
+        /AppleWebKit/.test(userAgent) &&
+        !/CriOS|FxiOS|EdgiOS/.test(userAgent)
+    );
+})();
 
 const timerRingCircumference = 2 * Math.PI * 52;
 let activeBackgroundLayerIndex = 0;
+let audioContext = null;
+let audioSourceNode = null;
+let audioGainNode = null;
 
 const savedPresetId = (() => {
     try {
@@ -235,6 +249,10 @@ function currentPreset() {
 
 function currentTimerOption() {
     return timerOptions.find((option) => option.id === state.timerOptionId);
+}
+
+function preferredOutputGain() {
+    return isAppleMobileSafari ? 1.55 : 1;
 }
 
 function absoluteAudioUrl(audioPath) {
@@ -362,7 +380,7 @@ function updatePlaybackButton() {
 function updateTimerRing() {
     const option = currentTimerOption();
 
-    if (!option.duration || state.timerDeadline === null || state.timerRemaining === null) {
+    if (!option.duration || state.timerRemaining === null) {
         playButton.classList.remove("timer-active");
         timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
         timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
@@ -392,6 +410,50 @@ function effectiveTargetVolume(now = Date.now()) {
     }
 
     return timerVolume;
+}
+
+function ensureAudioOutputChain() {
+    if (!AudioContextClass || audioGainNode) {
+        return;
+    }
+
+    try {
+        audioContext = new AudioContextClass();
+        audioSourceNode = audioContext.createMediaElementSource(ambientAudio);
+        audioGainNode = audioContext.createGain();
+        audioSourceNode.connect(audioGainNode);
+        audioGainNode.connect(audioContext.destination);
+    } catch (error) {
+        audioContext = null;
+        audioSourceNode = null;
+        audioGainNode = null;
+    }
+}
+
+async function resumeAudioOutputChain() {
+    ensureAudioOutputChain();
+
+    if (!audioContext || audioContext.state !== "suspended") {
+        return;
+    }
+
+    try {
+        await audioContext.resume();
+    } catch (error) {
+        // Fall back to regular media element output.
+    }
+}
+
+function applyPlaybackOutput(now = Date.now()) {
+    const level = effectiveTargetVolume(now);
+
+    if (audioGainNode) {
+        audioGainNode.gain.value = level * preferredOutputGain();
+        ambientAudio.volume = 1;
+        return;
+    }
+
+    ambientAudio.volume = level;
 }
 
 function ensurePlaybackLoop() {
@@ -426,7 +488,7 @@ function syncPlaybackState() {
     }
 
     if (state.isPlaying) {
-        ambientAudio.volume = effectiveTargetVolume(now);
+        applyPlaybackOutput(now);
     }
 
     render();
@@ -436,10 +498,10 @@ function syncPlaybackState() {
 async function startCurrentPresetAudio() {
     const preset = currentPreset();
     ensureAmbientAudioPreset(preset);
-    ambientAudio.volume = effectiveTargetVolume();
+    applyPlaybackOutput();
 
     await ambientAudio.play();
-    ambientAudio.volume = effectiveTargetVolume();
+    applyPlaybackOutput();
 }
 
 async function play() {
@@ -449,6 +511,7 @@ async function play() {
     ensurePlaybackLoop();
 
     try {
+        await resumeAudioOutputChain();
         await startCurrentPresetAudio();
 
         if (requestId !== state.playRequestId || !state.isPlaying) {
@@ -519,7 +582,11 @@ function stopPlaybackTimerForPause() {
 }
 
 function handleSleepTimerCompletion() {
-    ambientAudio.volume = 0;
+    if (audioGainNode) {
+        audioGainNode.gain.value = 0;
+    } else {
+        ambientAudio.volume = 0;
+    }
     pause();
     stopPlaybackTimerForPause();
     playbackStatus.textContent = "Playback stopped after the timer finished.";
@@ -701,16 +768,47 @@ function handlePointerEnd(event) {
     resetDragState();
 }
 
+function bindDiscreteButton(button, handler) {
+    const invoke = (event) => {
+        event.preventDefault();
+        handler();
+    };
+
+    if (supportsPointerEvents) {
+        button.addEventListener("pointerup", (event) => {
+            if (!event.isPrimary) {
+                return;
+            }
+
+            if (event.pointerType === "mouse" && event.button !== 0) {
+                return;
+            }
+
+            invoke(event);
+        });
+    } else {
+        button.addEventListener("click", invoke);
+    }
+
+    button.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+            return;
+        }
+
+        invoke(event);
+    });
+}
+
 function bindEvents() {
-    playButton.addEventListener("click", () => {
+    bindDiscreteButton(playButton, () => {
         void togglePlaybackByUser();
     });
 
-    timerButton.addEventListener("click", cyclePlaybackTimer);
-    prevPresetButton.addEventListener("click", () => {
+    bindDiscreteButton(timerButton, cyclePlaybackTimer);
+    bindDiscreteButton(prevPresetButton, () => {
         void setPresetByIndex(state.selectedPresetIndex - 1, { wrap: true });
     });
-    nextPresetButton.addEventListener("click", () => {
+    bindDiscreteButton(nextPresetButton, () => {
         void setPresetByIndex(state.selectedPresetIndex + 1, { wrap: true });
     });
 
