@@ -523,9 +523,6 @@ button:focus-visible,
 .timer-ring__progress {
     fill: none;
     stroke-width: 2.8;
-    transform-origin: center;
-    transform: rotate(-90deg);
-    transform-box: fill-box;
     vector-effect: non-scaling-stroke;
 }
 

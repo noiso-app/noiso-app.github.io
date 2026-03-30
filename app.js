@@ -422,16 +422,19 @@ function updateTimerRing() {
 
     playButton.classList.toggle("timer-active", hasRunningTimer);
     timerRingProgress.hidden = !hasRunningTimer;
-    timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
 
     if (!hasRunningTimer) {
         playButton.classList.remove("timer-active");
-        timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
+        timerRingProgress.style.strokeDasharray = `${timerRingCircumference} 0`;
+        timerRingProgress.style.strokeDashoffset = "0";
         return;
     }
 
     const progress = Math.min(Math.max(state.timerRemaining / option.duration, 0), 1);
-    timerRingProgress.style.strokeDashoffset = `${timerRingCircumference * (1 - progress)}`;
+    const visibleLength = timerRingCircumference * progress;
+    const gapLength = timerRingCircumference - visibleLength;
+    timerRingProgress.style.strokeDasharray = `${visibleLength} ${gapLength}`;
+    timerRingProgress.style.strokeDashoffset = `${-gapLength}`;
 }
 
 function render() {
