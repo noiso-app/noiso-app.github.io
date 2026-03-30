@@ -567,8 +567,16 @@ function resetDragState() {
     updateTitlePosition();
 }
 
-async function setPresetByIndex(nextIndex) {
-    const clampedIndex = Math.min(Math.max(nextIndex, 0), presets.length - 1);
+function normalizePresetIndex(nextIndex, shouldWrap = false) {
+    if (shouldWrap) {
+        return (nextIndex % presets.length + presets.length) % presets.length;
+    }
+
+    return Math.min(Math.max(nextIndex, 0), presets.length - 1);
+}
+
+async function setPresetByIndex(nextIndex, { wrap = false } = {}) {
+    const clampedIndex = normalizePresetIndex(nextIndex, wrap);
 
     if (clampedIndex === state.selectedPresetIndex) {
         resetDragState();
@@ -646,10 +654,10 @@ function bindEvents() {
 
     timerButton.addEventListener("click", cyclePlaybackTimer);
     prevPresetButton.addEventListener("click", () => {
-        void setPresetByIndex(state.selectedPresetIndex - 1);
+        void setPresetByIndex(state.selectedPresetIndex - 1, { wrap: true });
     });
     nextPresetButton.addEventListener("click", () => {
-        void setPresetByIndex(state.selectedPresetIndex + 1);
+        void setPresetByIndex(state.selectedPresetIndex + 1, { wrap: true });
     });
 
     demoSurface.addEventListener("pointerdown", handlePointerDown);
