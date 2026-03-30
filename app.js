@@ -197,7 +197,7 @@ const isConstrainedMobileDevice = (() => {
     return coarsePointer && (mobileUserAgent || narrowViewport || touchCapable);
 })();
 
-const timerRingCircumference = 2 * Math.PI * 57;
+const timerRingCircumference = 2 * Math.PI * 52;
 let activeBackgroundLayerIndex = 0;
 let audioContext = null;
 let audioSourceNode = null;

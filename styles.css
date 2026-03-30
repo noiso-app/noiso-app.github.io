@@ -455,7 +455,7 @@ button:focus-visible,
 .play-control::after {
     content: "";
     position: absolute;
-    inset: 13px;
+    inset: 8px;
     border-radius: 50%;
     pointer-events: none;
 }
@@ -468,7 +468,7 @@ button:focus-visible,
 }
 
 .play-control::after {
-    inset: 30px;
+    inset: 24px;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 78%);
     filter: blur(18px);
     opacity: 0.55;
