@@ -518,8 +518,8 @@ button:focus-visible,
         stroke-dashoffset 140ms linear;
 }
 
-.play-control.timer-active .timer-ring__track {
-    opacity: 1;
+.play-control.timer-selected .timer-ring__track {
+    opacity: 0.55;
 }
 
 .play-control.timer-active .timer-ring__progress {

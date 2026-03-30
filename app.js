@@ -379,17 +379,26 @@ function updatePlaybackButton() {
 
 function updateTimerRing() {
     const option = currentTimerOption();
+    const hasTimerSelection = Boolean(option.duration && state.timerRemaining !== null);
+    const hasRunningTimer = Boolean(hasTimerSelection && state.timerDeadline !== null);
 
-    if (!option.duration || state.timerRemaining === null) {
+    playButton.classList.toggle("timer-selected", hasTimerSelection);
+    playButton.classList.toggle("timer-active", hasRunningTimer);
+    timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
+
+    if (!hasTimerSelection) {
         playButton.classList.remove("timer-active");
-        timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
+        playButton.classList.remove("timer-selected");
+        timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
+        return;
+    }
+
+    if (!hasRunningTimer) {
         timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
         return;
     }
 
     const progress = Math.min(Math.max(state.timerRemaining / option.duration, 0), 1);
-    playButton.classList.add("timer-active");
-    timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
     timerRingProgress.style.strokeDashoffset = `${timerRingCircumference * (1 - progress)}`;
 }
 
