@@ -287,6 +287,7 @@ function updateTimerButton() {
     const option = currentTimerOption();
     timerButton.textContent = option.label;
     timerButton.setAttribute("aria-label", `Sleep timer, ${option.accessibility}`);
+    timerButton.classList.toggle("timer-button--compact", option.duration !== null);
 }
 
 function updatePresetAccessibility() {

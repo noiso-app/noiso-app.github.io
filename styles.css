@@ -314,6 +314,10 @@ button {
     line-height: 1;
 }
 
+.timer-button--compact {
+    font-size: 1rem;
+}
+
 .demo-surface {
     position: absolute;
     inset: 0;
