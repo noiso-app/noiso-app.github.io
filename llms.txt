@@ -1,0 +1,24 @@
+# Noiso
+
+> Noiso is an offline sleep sound app for iPhone with seven ambient presets, background audio, and a soft fade-out sleep timer.
+
+Noiso is a one-screen iPhone app focused on calm ambient sleep playback. It has no ads, subscriptions, onboarding, login, or streaming audio.
+
+## Canonical pages
+
+- [Home](https://noiso.app/): Product overview, interactive demo, and feature summary.
+- [Support](https://noiso.app/support/): Playback, timer, background audio, and common support questions.
+- [Privacy Policy](https://noiso.app/privacy/): Privacy details and support contact information.
+
+## Key facts
+
+- Works offline with bundled local audio.
+- Includes seven ambient presets.
+- Supports background playback and lock screen controls in the iPhone app.
+- Includes sleep timer options: infinity, 30 minutes, 1 hour, and 2 hours.
+- Free to use, with no ads, subscriptions, in-app purchases, or account system.
+
+## Contact
+
+- Support: https://noiso.app/support/
+- Email: mailto:aleksnick01@gmail.com

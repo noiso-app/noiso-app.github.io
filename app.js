@@ -1,4 +1,3 @@
-const PLAY_FADE_IN_MS = 2000;
 const TIMER_FADE_OUT_MS = 5000;
 const PLAYBACK_TICK_MS = 100;
 
@@ -175,6 +174,7 @@ const prevPresetButton = document.getElementById("prevPresetButton");
 const nextPresetButton = document.getElementById("nextPresetButton");
 const presetStatus = document.getElementById("presetStatus");
 const playbackStatus = document.getElementById("playbackStatus");
+const preloadedAudio = new Map();
 
 const timerRingCircumference = 2 * Math.PI * 52;
 let activeBackgroundLayerIndex = 0;
@@ -199,11 +199,11 @@ const state = {
     timerRemaining: null,
     timerStartedAt: null,
     timerDeadline: null,
-    fadeInStartedAt: null,
     playbackLoopId: null,
     dragPointerId: null,
     dragStartX: 0,
-    dragOffset: 0
+    dragOffset: 0,
+    playRequestId: 0
 };
 
 ambientAudio.loop = true;
@@ -235,6 +235,61 @@ function currentPreset() {
 
 function currentTimerOption() {
     return timerOptions.find((option) => option.id === state.timerOptionId);
+}
+
+function absoluteAudioUrl(audioPath) {
+    return new URL(audioPath, window.location.href).href;
+}
+
+function ambientAudioMatchesPreset(preset) {
+    return ambientAudio.src === absoluteAudioUrl(preset.audio);
+}
+
+function warmAudioAsset(audioPath) {
+    if (preloadedAudio.has(audioPath)) {
+        return;
+    }
+
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = audioPath;
+    audio.load();
+    preloadedAudio.set(audioPath, audio);
+}
+
+function ensureAmbientAudioPreset(preset) {
+    warmAudioAsset(preset.audio);
+
+    if (ambientAudioMatchesPreset(preset)) {
+        return;
+    }
+
+    ambientAudio.src = preset.audio;
+    ambientAudio.load();
+}
+
+function primeAmbientAudioForPreset(preset = currentPreset()) {
+    if (state.isPlaying) {
+        warmAudioAsset(preset.audio);
+        return;
+    }
+
+    ensureAmbientAudioPreset(preset);
+}
+
+function preloadPresetAudioInBackground() {
+    const preloadAll = () => {
+        presets.forEach((preset) => {
+            warmAudioAsset(preset.audio);
+        });
+    };
+
+    if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(preloadAll, { timeout: 1500 });
+        return;
+    }
+
+    window.setTimeout(preloadAll, 300);
 }
 
 function applyThemeColors(colors) {
@@ -269,6 +324,7 @@ function updateThemeForPreset() {
     applyThemeColors(preset.colors);
     transitionBackground(preset.background);
     saveSelectedPreset();
+    primeAmbientAudioForPreset(preset);
 }
 
 function updateTitlePosition() {
@@ -335,18 +391,7 @@ function effectiveTargetVolume(now = Date.now()) {
         timerVolume = Math.max(state.timerRemaining / TIMER_FADE_OUT_MS, 0);
     }
 
-    if (state.fadeInStartedAt === null) {
-        return timerVolume;
-    }
-
-    const fadeProgress = Math.min(Math.max((now - state.fadeInStartedAt) / PLAY_FADE_IN_MS, 0), 1);
-
-    if (fadeProgress >= 1) {
-        state.fadeInStartedAt = null;
-        return timerVolume;
-    }
-
-    return timerVolume * fadeProgress;
+    return timerVolume;
 }
 
 function ensurePlaybackLoop() {
@@ -358,7 +403,7 @@ function ensurePlaybackLoop() {
 }
 
 function stopPlaybackLoopIfIdle() {
-    if (state.isPlaying || state.timerDeadline !== null || state.fadeInStartedAt !== null) {
+    if (state.isPlaying || state.timerDeadline !== null) {
         return;
     }
 
@@ -388,37 +433,35 @@ function syncPlaybackState() {
     stopPlaybackLoopIfIdle();
 }
 
-async function startCurrentPresetAudio({ fadeIn }) {
+async function startCurrentPresetAudio() {
     const preset = currentPreset();
-
-    if (!ambientAudio.src.endsWith(preset.audio)) {
-        ambientAudio.src = preset.audio;
-        ambientAudio.load();
-    }
-
-    if (fadeIn) {
-        state.fadeInStartedAt = Date.now();
-        ambientAudio.volume = 0;
-    } else {
-        state.fadeInStartedAt = null;
-        ambientAudio.volume = effectiveTargetVolume();
-    }
+    ensureAmbientAudioPreset(preset);
+    ambientAudio.volume = effectiveTargetVolume();
 
     await ambientAudio.play();
-    state.isPlaying = true;
     ambientAudio.volume = effectiveTargetVolume();
-    ensurePlaybackLoop();
 }
 
 async function play() {
+    const requestId = ++state.playRequestId;
+    state.isPlaying = true;
+    render();
+    ensurePlaybackLoop();
+
     try {
-        await startCurrentPresetAudio({ fadeIn: true });
+        await startCurrentPresetAudio();
+
+        if (requestId !== state.playRequestId || !state.isPlaying) {
+            ambientAudio.pause();
+            stopPlaybackLoopIfIdle();
+            return false;
+        }
+
         playbackStatus.textContent = `Playing ${currentPreset().title}`;
         render();
         return true;
     } catch (error) {
         state.isPlaying = false;
-        state.fadeInStartedAt = null;
         playbackStatus.textContent = "Playback could not start in this browser session.";
         render();
         stopPlaybackLoopIfIdle();
@@ -427,9 +470,9 @@ async function play() {
 }
 
 function pause() {
+    state.playRequestId += 1;
     ambientAudio.pause();
     state.isPlaying = false;
-    state.fadeInStartedAt = null;
     playbackStatus.textContent = `Paused ${currentPreset().title}`;
     render();
     stopPlaybackLoopIfIdle();
@@ -589,12 +632,23 @@ async function setPresetByIndex(nextIndex, { wrap = false } = {}) {
     resetDragState();
 
     if (state.isPlaying) {
+        const requestId = ++state.playRequestId;
+
         try {
-            await startCurrentPresetAudio({ fadeIn: false });
+            await startCurrentPresetAudio();
+
+            if (requestId !== state.playRequestId || !state.isPlaying) {
+                ambientAudio.pause();
+                return;
+            }
+
             playbackStatus.textContent = `Playing ${currentPreset().title}`;
         } catch (error) {
+            if (requestId !== state.playRequestId) {
+                return;
+            }
+
             state.isPlaying = false;
-            state.fadeInStartedAt = null;
             playbackStatus.textContent = "The new preset could not start.";
         }
         render();
@@ -704,6 +758,7 @@ function init() {
     buildPageDots();
     initTimerRing();
     updateThemeForPreset();
+    preloadPresetAudioInBackground();
     bindEvents();
     render();
 }

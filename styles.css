@@ -16,6 +16,10 @@
     --panel-border: rgba(255, 255, 255, 0.08);
     --shadow-strong: 0 40px 120px rgba(0, 0, 0, 0.38);
     --shadow-soft: 0 24px 60px rgba(0, 0, 0, 0.22);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
 }
 
 *,
@@ -25,12 +29,15 @@
 }
 
 html {
+    min-height: 100%;
     scroll-behavior: smooth;
+    background: #040608;
 }
 
 body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh;
     font-family: "Avenir Next Rounded", "Avenir Next", "SF Pro Rounded", "Segoe UI", sans-serif;
     background: #040608;
     color: var(--primary-text);
@@ -53,6 +60,22 @@ button {
     font: inherit;
 }
 
+button,
+.demo-surface {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button:focus,
+.demo-surface:focus {
+    outline: none;
+}
+
+button:focus-visible,
+.demo-surface:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.2);
+    outline-offset: 4px;
+}
+
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -68,6 +91,8 @@ button {
 .site-background {
     position: fixed;
     inset: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
     z-index: -4;
     pointer-events: none;
     overflow: hidden;
@@ -117,6 +142,11 @@ button {
 .page-shell {
     position: relative;
     z-index: 1;
+    padding:
+        var(--safe-top)
+        var(--safe-right)
+        var(--safe-bottom)
+        var(--safe-left);
 }
 
 .site-header,
@@ -208,6 +238,13 @@ button {
     max-width: 40rem;
     color: var(--secondary-text);
     font-size: clamp(1rem, 2vw, 1.2rem);
+}
+
+.hero-support {
+    margin: 16px 0 0;
+    max-width: 38rem;
+    color: var(--secondary-text);
+    font-size: clamp(0.98rem, 1.6vw, 1.08rem);
 }
 
 .document-links {
@@ -377,6 +414,7 @@ button {
     position: relative;
     width: 152px;
     height: 152px;
+    border-radius: 50%;
     border: 0;
     padding: 0;
     background: transparent;
@@ -535,6 +573,10 @@ button {
     padding: 18px 0 72px;
 }
 
+.faq-section {
+    padding: 0 0 72px;
+}
+
 .promo-panel,
 .document-panel {
     border-radius: 36px;
@@ -580,6 +622,13 @@ button {
     display: grid;
     gap: 18px;
     margin-top: 38px;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    align-content: start;
 }
 
 .feature-card {
@@ -782,6 +831,29 @@ button {
     font-weight: 600;
 }
 
+.document-faq {
+    display: grid;
+    gap: 18px;
+}
+
+.document-faq-item {
+    padding: 20px 20px 18px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.document-faq-item h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.document-faq-item p {
+    margin: 0;
+    color: var(--secondary-text);
+}
+
 .document-section p,
 .document-section li {
     color: var(--secondary-text);
@@ -816,6 +888,10 @@ button {
         min-height: auto;
         display: grid;
         gap: 16px;
+    }
+
+    .faq-grid {
+        grid-template-columns: 1fr;
     }
 
     .shot-card {
@@ -873,6 +949,18 @@ button {
     .preset-nav {
         width: 48px;
         height: 48px;
+    }
+
+    .screenshot-gallery {
+        display: block;
+    }
+
+    .shot-card:not(.shot-card--one) {
+        display: none;
+    }
+
+    .shot-card figcaption {
+        display: none;
     }
 }
 
