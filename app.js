@@ -197,7 +197,7 @@ const isConstrainedMobileDevice = (() => {
     return coarsePointer && (mobileUserAgent || narrowViewport || touchCapable);
 })();
 
-const timerRingCircumference = 2 * Math.PI * 52;
+const timerRingCircumference = 2 * Math.PI * 57;
 let activeBackgroundLayerIndex = 0;
 let audioContext = null;
 let audioSourceNode = null;
@@ -421,6 +421,7 @@ function updateTimerRing() {
     );
 
     playButton.classList.toggle("timer-active", hasRunningTimer);
+    timerRingProgress.hidden = !hasRunningTimer;
     timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
 
     if (!hasRunningTimer) {

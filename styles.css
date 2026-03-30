@@ -455,7 +455,7 @@ button:focus-visible,
 .play-control::after {
     content: "";
     position: absolute;
-    inset: 8px;
+    inset: 13px;
     border-radius: 50%;
     pointer-events: none;
 }
@@ -468,7 +468,7 @@ button:focus-visible,
 }
 
 .play-control::after {
-    inset: 24px;
+    inset: 30px;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.14), transparent 78%);
     filter: blur(18px);
     opacity: 0.55;
@@ -520,27 +520,20 @@ button:focus-visible,
     z-index: 2;
 }
 
-.timer-ring__track,
 .timer-ring__progress {
     fill: none;
-    stroke-width: 3.6;
+    stroke-width: 2.8;
     transform-origin: center;
     transform: rotate(-90deg);
     transform-box: fill-box;
     vector-effect: non-scaling-stroke;
 }
 
-.timer-ring__track {
-    stroke: rgba(255, 255, 255, 0.12);
-    opacity: 0;
-    transition: opacity 180ms ease;
-}
-
 .timer-ring__progress {
-    stroke: rgba(255, 255, 255, 0.62);
+    stroke: rgba(255, 255, 255, 0.3);
     stroke-linecap: round;
     opacity: 0;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18));
+    filter: blur(0.25px);
     transition:
         opacity 180ms ease,
         stroke-dashoffset 140ms linear;
@@ -548,10 +541,6 @@ button:focus-visible,
 
 .play-control.timer-active .timer-ring__progress {
     opacity: 1;
-}
-
-.play-control.timer-active .timer-ring__track {
-    opacity: 0.55;
 }
 
 .control-footer {
