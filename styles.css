@@ -244,13 +244,6 @@ button:focus-visible,
     font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
-.hero-support {
-    margin: 16px 0 0;
-    max-width: 38rem;
-    color: var(--secondary-text);
-    font-size: clamp(0.98rem, 1.6vw, 1.08rem);
-}
-
 .document-links {
     display: flex;
     flex-wrap: wrap;
@@ -577,10 +570,6 @@ button:focus-visible,
     padding: 18px 0 72px;
 }
 
-.faq-section {
-    padding: 0 0 72px;
-}
-
 .promo-panel,
 .document-panel {
     border-radius: 36px;
@@ -626,13 +615,6 @@ button:focus-visible,
     display: grid;
     gap: 18px;
     margin-top: 38px;
-}
-
-.faq-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-    align-content: start;
 }
 
 .feature-card {
@@ -892,10 +874,6 @@ button:focus-visible,
         min-height: auto;
         display: grid;
         gap: 16px;
-    }
-
-    .faq-grid {
-        grid-template-columns: 1fr;
     }
 
     .shot-card {
