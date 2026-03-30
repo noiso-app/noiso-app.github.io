@@ -192,6 +192,7 @@ let activeBackgroundLayerIndex = 0;
 let audioContext = null;
 let audioSourceNode = null;
 let audioGainNode = null;
+let interactiveAudioReady = false;
 
 const savedPresetId = (() => {
     try {
@@ -222,6 +223,10 @@ const state = {
 
 ambientAudio.loop = true;
 ambientAudio.preload = "auto";
+
+if (isAppleMobileSafari) {
+    document.documentElement.classList.add("is-apple-mobile-safari");
+}
 
 function buildTitleTrack() {
     titleTrack.innerHTML = presets
@@ -264,6 +269,10 @@ function ambientAudioMatchesPreset(preset) {
 }
 
 function warmAudioAsset(audioPath) {
+    if (isAppleMobileSafari) {
+        return;
+    }
+
     if (preloadedAudio.has(audioPath)) {
         return;
     }
@@ -296,6 +305,10 @@ function primeAmbientAudioForPreset(preset = currentPreset()) {
 }
 
 function preloadPresetAudioInBackground() {
+    if (isAppleMobileSafari) {
+        return;
+    }
+
     const preloadAll = () => {
         presets.forEach((preset) => {
             warmAudioAsset(preset.audio);
@@ -327,6 +340,14 @@ function applyThemeColors(colors) {
 }
 
 function transitionBackground(imageUrl) {
+    if (isAppleMobileSafari) {
+        bgLayers.forEach((layer) => {
+            layer.style.backgroundImage = "";
+            layer.classList.remove("is-active");
+        });
+        return;
+    }
+
     const nextLayerIndex = activeBackgroundLayerIndex === 0 ? 1 : 0;
     const nextLayer = bgLayers[nextLayerIndex];
     const currentLayer = bgLayers[activeBackgroundLayerIndex];
@@ -453,6 +474,16 @@ async function resumeAudioOutputChain() {
     }
 }
 
+async function prepareInteractiveAudio() {
+    if (interactiveAudioReady) {
+        return;
+    }
+
+    primeAmbientAudioForPreset();
+    await resumeAudioOutputChain();
+    interactiveAudioReady = true;
+}
+
 function applyPlaybackOutput(now = Date.now()) {
     const level = effectiveTargetVolume(now);
 
@@ -520,7 +551,7 @@ async function play() {
     ensurePlaybackLoop();
 
     try {
-        await resumeAudioOutputChain();
+        await prepareInteractiveAudio();
         await startCurrentPresetAudio();
 
         if (requestId !== state.playRequestId || !state.isPlaying) {
@@ -784,6 +815,10 @@ function bindDiscreteButton(button, handler) {
     };
 
     if (supportsPointerEvents) {
+        button.addEventListener("pointerdown", () => {
+            void prepareInteractiveAudio();
+        }, { passive: true });
+
         button.addEventListener("pointerup", (event) => {
             if (!event.isPrimary) {
                 return;
@@ -796,6 +831,9 @@ function bindDiscreteButton(button, handler) {
             invoke(event);
         });
     } else {
+        button.addEventListener("touchstart", () => {
+            void prepareInteractiveAudio();
+        }, { passive: true });
         button.addEventListener("click", invoke);
     }
 
