@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Noiso</title>
+    <meta
+        name="description"
+        content="Noiso is a calm sleep-sound app with ambient presets, background playback, and a soft fade-out timer."
+    >
+    <link rel="icon" href="assets/icon/noiso-icon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="site-background" aria-hidden="true">
+        <div class="bg-layer bg-layer--a is-active" id="bgLayerA"></div>
+        <div class="bg-layer bg-layer--b" id="bgLayerB"></div>
+        <div class="site-wash"></div>
+        <div class="site-noise"></div>
+    </div>
+
+    <div class="page-shell">
+        <header class="site-header">
+            <a class="brand-mark" href="#top">Noiso</a>
+            <nav class="site-nav" aria-label="Site">
+                <a href="#ios-app">iOS App</a>
+                <a href="privacy/">Privacy</a>
+                <a href="support/">Support</a>
+            </nav>
+        </header>
+
+        <main id="top">
+            <section class="hero-section">
+                <div class="hero-grid">
+                    <div class="hero-copy">
+                        <p class="eyebrow">Calm sleep sounds</p>
+                        <h1>One screen, seven presets, nothing noisy around it.</h1>
+                    </div>
+
+                    <div class="demo-column">
+                        <div class="demo-app" id="demoApp">
+                            <div
+                                class="demo-surface"
+                                id="demoSurface"
+                                tabindex="0"
+                                aria-label="Sound preset"
+                                aria-roledescription="carousel"
+                            >
+                                <div class="title-window">
+                                    <div class="preset-title-track" id="presetTitleTrack"></div>
+                                </div>
+
+                                <div class="control-row">
+                                    <button
+                                        class="preset-nav"
+                                        id="prevPresetButton"
+                                        type="button"
+                                        aria-label="Previous preset"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M14.5 6.5 9 12l5.5 5.5"></path>
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        class="play-control"
+                                        id="playButton"
+                                        type="button"
+                                        aria-label="Play current preset"
+                                    >
+                                        <svg class="timer-ring" viewBox="0 0 120 120" aria-hidden="true">
+                                            <circle class="timer-ring__track" cx="60" cy="60" r="52"></circle>
+                                            <circle class="timer-ring__progress" id="timerRingProgress" cx="60" cy="60" r="52"></circle>
+                                        </svg>
+                                        <span class="play-core">
+                                            <svg class="glyph glyph--play" id="playGlyphPlay" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M9 7.25 17 12 9 16.75z"></path>
+                                            </svg>
+                                            <svg class="glyph glyph--pause" id="playGlyphPause" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M8.25 7.25H11v9.5H8.25zm4.75 0h2.75v9.5H13z"></path>
+                                            </svg>
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        class="preset-nav"
+                                        id="nextPresetButton"
+                                        type="button"
+                                        aria-label="Next preset"
+                                    >
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M9.5 6.5 15 12l-5.5 5.5"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="control-footer">
+                                    <div class="page-dots" id="pageDots" aria-hidden="true"></div>
+                                    <button
+                                        class="timer-button"
+                                        id="timerButton"
+                                        type="button"
+                                        aria-label="Sleep timer"
+                                        aria-live="polite"
+                                    >
+                                        ∞
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="promo-section" id="ios-app">
+                <div class="promo-panel">
+                    <div class="promo-copy">
+                        <div class="app-lockup">
+                            <img src="assets/icon/noiso-icon.png" alt="Noiso app icon" class="app-icon">
+                            <div>
+                                <p class="eyebrow">Noiso for iPhone</p>
+                                <h2>Built for quiet routines.</h2>
+                            </div>
+                        </div>
+                        <div class="feature-grid">
+                            <article class="feature-card">
+                                <h3>7 ambient presets</h3>
+                                <p>Forest, rain, ocean, snow, steam, fjord, and dunes.</p>
+                            </article>
+                            <article class="feature-card">
+                                <h3>Soft timer logic</h3>
+                                <p>Cycle from infinity to 30m, 1h, and 2h without extra setup.</p>
+                            </article>
+                            <article class="feature-card">
+                                <h3>Night-safe design</h3>
+                                <p>Muted contrast, dark surfaces, and slow background motion.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="screenshot-gallery" aria-label="Noiso app screenshots">
+                        <figure class="shot-card shot-card--one">
+                            <div class="shot-device" aria-hidden="true">
+                                <div class="shot-device__screen">
+                                    <img
+                                        src="assets/screenshots/img_8349.jpg"
+                                        alt="Noiso showing Sumatra Coast After Dusk with the play control centered"
+                                        loading="lazy"
+                                    >
+                                </div>
+                                <div class="shot-device__island"></div>
+                                <div class="shot-device__gloss"></div>
+                            </div>
+                            <figcaption>Calm Sleep Sounds, One Tap Away</figcaption>
+                        </figure>
+
+                        <figure class="shot-card shot-card--two">
+                            <div class="shot-device" aria-hidden="true">
+                                <div class="shot-device__screen">
+                                    <img
+                                        src="assets/screenshots/img_8350.jpg"
+                                        alt="Noiso playing Rain Temple Courtyard in the dark theme interface"
+                                        loading="lazy"
+                                    >
+                                </div>
+                                <div class="shot-device__island"></div>
+                                <div class="shot-device__gloss"></div>
+                            </div>
+                            <figcaption>7 ambient presets, each with its own quiet atmosphere</figcaption>
+                        </figure>
+
+                        <figure class="shot-card shot-card--three">
+                            <div class="shot-device" aria-hidden="true">
+                                <div class="shot-device__screen">
+                                    <img
+                                        src="assets/screenshots/img_8352.jpg"
+                                        alt="Noiso with the timer ring visible around the pause control"
+                                        loading="lazy"
+                                    >
+                                </div>
+                                <div class="shot-device__island"></div>
+                                <div class="shot-device__gloss"></div>
+                            </div>
+                            <figcaption>Sleep timer with a subtle progress ring and soft fade-out</figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <p>Noiso is a minimal sleep-sound app for babies, parents, and light sleepers.</p>
+            <div class="footer-links">
+                <a href="privacy/">Privacy Policy</a>
+                <a href="support/">Support</a>
+            </div>
+        </footer>
+    </div>
+
+    <audio id="ambientAudio" preload="auto" playsinline></audio>
+    <p class="visually-hidden" id="presetStatus" aria-live="polite"></p>
+    <p class="visually-hidden" id="playbackStatus" aria-live="polite"></p>
+
+    <script src="app.js"></script>
+</body>
+</html>
