@@ -98,7 +98,7 @@ button:focus-visible,
     overflow: hidden;
 }
 
-.is-apple-mobile-safari .site-background {
+.is-constrained-mobile .site-background {
     background:
         radial-gradient(circle at 15% 18%, var(--glow-1), transparent 38%),
         radial-gradient(circle at 82% 24%, var(--glow-2), transparent 34%),
@@ -117,7 +117,7 @@ button:focus-visible,
     will-change: opacity;
 }
 
-.is-apple-mobile-safari .bg-layer {
+.is-constrained-mobile .bg-layer {
     display: none;
 }
 
@@ -151,7 +151,7 @@ button:focus-visible,
     mask-image: linear-gradient(180deg, transparent, black 18%, black 82%, transparent);
 }
 
-.is-apple-mobile-safari .site-noise {
+.is-constrained-mobile .site-noise {
     opacity: 0.08;
 }
 
@@ -316,11 +316,16 @@ button:focus-visible,
     backdrop-filter: blur(18px);
 }
 
-.is-apple-mobile-safari .demo-app,
-.is-apple-mobile-safari .promo-panel,
-.is-apple-mobile-safari .document-panel,
-.is-apple-mobile-safari .page-dots {
+.is-constrained-mobile .demo-app,
+.is-constrained-mobile .promo-panel,
+.is-constrained-mobile .document-panel,
+.is-constrained-mobile .page-dots {
     backdrop-filter: none;
+}
+
+.is-constrained-mobile .demo-app::before,
+.is-constrained-mobile .demo-app::after {
+    display: none;
 }
 
 .demo-app::before,
@@ -541,12 +546,12 @@ button:focus-visible,
         stroke-dashoffset 140ms linear;
 }
 
-.play-control.timer-selected .timer-ring__track {
-    opacity: 0.55;
-}
-
 .play-control.timer-active .timer-ring__progress {
     opacity: 1;
+}
+
+.play-control.timer-active .timer-ring__track {
+    opacity: 0.55;
 }
 
 .control-footer {

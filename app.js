@@ -187,6 +187,16 @@ const isAppleMobileSafari = (() => {
     );
 })();
 
+const isConstrainedMobileDevice = (() => {
+    const userAgent = navigator.userAgent || "";
+    const mobileUserAgent = /Android|iPhone|iPad|iPod|Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    const coarsePointer = window.matchMedia?.("(pointer: coarse)").matches ?? false;
+    const narrowViewport = window.matchMedia?.("(max-width: 900px)").matches ?? false;
+    const touchCapable = (navigator.maxTouchPoints || 0) > 0;
+
+    return coarsePointer && (mobileUserAgent || narrowViewport || touchCapable);
+})();
+
 const timerRingCircumference = 2 * Math.PI * 52;
 let activeBackgroundLayerIndex = 0;
 let audioContext = null;
@@ -223,6 +233,10 @@ const state = {
 
 ambientAudio.loop = true;
 ambientAudio.preload = "auto";
+
+if (isConstrainedMobileDevice) {
+    document.documentElement.classList.add("is-constrained-mobile");
+}
 
 if (isAppleMobileSafari) {
     document.documentElement.classList.add("is-apple-mobile-safari");
@@ -269,7 +283,7 @@ function ambientAudioMatchesPreset(preset) {
 }
 
 function warmAudioAsset(audioPath) {
-    if (isAppleMobileSafari) {
+    if (isConstrainedMobileDevice) {
         return;
     }
 
@@ -305,7 +319,7 @@ function primeAmbientAudioForPreset(preset = currentPreset()) {
 }
 
 function preloadPresetAudioInBackground() {
-    if (isAppleMobileSafari) {
+    if (isConstrainedMobileDevice) {
         return;
     }
 
@@ -340,7 +354,7 @@ function applyThemeColors(colors) {
 }
 
 function transitionBackground(imageUrl) {
-    if (isAppleMobileSafari) {
+    if (isConstrainedMobileDevice) {
         bgLayers.forEach((layer) => {
             layer.style.backgroundImage = "";
             layer.classList.remove("is-active");
@@ -400,21 +414,17 @@ function updatePlaybackButton() {
 
 function updateTimerRing() {
     const option = currentTimerOption();
-    const hasTimerSelection = Boolean(option.duration && state.timerRemaining !== null);
-    const hasRunningTimer = Boolean(hasTimerSelection && state.timerDeadline !== null);
+    const hasRunningTimer = Boolean(
+        option.duration &&
+        state.timerRemaining !== null &&
+        state.timerDeadline !== null
+    );
 
-    playButton.classList.toggle("timer-selected", hasTimerSelection);
     playButton.classList.toggle("timer-active", hasRunningTimer);
     timerRingProgress.style.strokeDasharray = `${timerRingCircumference}`;
 
-    if (!hasTimerSelection) {
-        playButton.classList.remove("timer-active");
-        playButton.classList.remove("timer-selected");
-        timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
-        return;
-    }
-
     if (!hasRunningTimer) {
+        playButton.classList.remove("timer-active");
         timerRingProgress.style.strokeDashoffset = `${timerRingCircumference}`;
         return;
     }
