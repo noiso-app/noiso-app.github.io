@@ -18,7 +18,7 @@ The site is intentionally simple:
 - HTML
 - CSS
 - vanilla JavaScript
-- Vite for local development
+- Vite for local development and production builds
 - GitHub Pages for hosting
 
 ## What Lives Here
@@ -26,8 +26,10 @@ The site is intentionally simple:
 - `index.html` - main landing page
 - `support/index.html` - public support page and FAQ
 - `privacy/index.html` - public privacy policy
+- `app.js` - thin browser entry point for the landing page
+- `site-demo.js` - landing page interaction logic, audio handling, timer behavior, and gesture handling
+- `site-config.js` - preset catalog, timer options, environment detection, and shared constants
 - `styles.css` - shared site styles
-- `app.js` - landing page demo interactions, preset switching, timer UI, and audio playback
 - `assets/audio/` - bundled demo audio presets
 - `assets/backgrounds/` - atmospheric background images
 - `assets/screenshots/` - iPhone screenshots used on the landing page
@@ -67,28 +69,32 @@ yarn preview
 Notes:
 
 - The site is static and does not depend on a backend.
-- GitHub Pages serves the checked-in files directly from the repository root.
-- `vite build` is mainly useful for local validation, not as the deployment source of truth.
+- Vite builds all three HTML entry points: `/`, `/support/`, and `/privacy/`.
+- Static deployment files such as `CNAME`, `robots.txt`, `sitemap.xml`, `llms.txt`, `.nojekyll`, and the original `assets/` tree are copied into `dist/` during build.
 
 ## Deployment
 
 The live site is served from GitHub Pages for this repository:
 
 - repo: `noiso-app/noiso-app.github.io`
-- branch: `main`
+- source: GitHub Actions artifact from `dist/`
 - custom domain: `noiso.app`
 
-Supporting files already in the repo:
+Build and deploy flow:
 
-- `CNAME`
-- `.nojekyll`
+1. Push changes to `main`.
+2. GitHub Actions runs `yarn build`.
+3. The workflow uploads `dist/` as the Pages artifact.
+4. GitHub Pages deploys the built site.
 
-Typical deploy flow:
+Workflow file:
 
-1. Edit the site files in the repo root.
-2. Commit changes to `main`.
-3. Push to GitHub.
-4. Wait for GitHub Pages to publish the new revision.
+- `.github/workflows/deploy.yml`
+
+One-time repository setting:
+
+- In `Settings -> Pages`, set the publishing source to `GitHub Actions`.
+- After that, Vite-generated hashed asset filenames handle cache busting automatically, so manual `?v=...` suffixes are not needed.
 
 ## SEO And Machine-Readable Metadata
 

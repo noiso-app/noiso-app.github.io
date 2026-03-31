@@ -29,17 +29,20 @@
 }
 
 html {
+    height: 100%;
     min-height: 100%;
     scroll-behavior: smooth;
-    background: #040608;
+    background: var(--bg-1);
 }
 
 body {
     margin: 0;
+    min-height: 100svh;
     min-height: 100vh;
     min-height: 100dvh;
     font-family: "Avenir Next Rounded", "Avenir Next", "SF Pro Rounded", "Segoe UI", sans-serif;
-    background: #040608;
+    background:
+        linear-gradient(180deg, var(--bg-2), var(--bg-1) 54%, var(--bg-1));
     color: var(--primary-text);
     line-height: 1.5;
     overflow-x: hidden;
@@ -91,8 +94,11 @@ button:focus-visible,
 .site-background {
     position: fixed;
     inset: 0;
+    min-height: 100svh;
     min-height: 100vh;
     min-height: 100dvh;
+    background:
+        linear-gradient(180deg, var(--bg-2), var(--bg-1) 54%, var(--bg-1));
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
@@ -162,6 +168,8 @@ button:focus-visible,
 }
 
 .page-shell {
+    min-height: 100svh;
+    min-height: 100dvh;
     padding:
         var(--safe-top)
         var(--safe-right)
@@ -531,9 +539,7 @@ button:focus-visible,
     stroke-linecap: round;
     opacity: 0;
     filter: blur(0.25px);
-    transition:
-        opacity 180ms ease,
-        stroke-dashoffset 140ms linear;
+    transition: opacity 180ms ease;
 }
 
 .play-control.timer-active .timer-ring__progress {
@@ -818,10 +824,13 @@ button:focus-visible,
 }
 
 .document-body {
+    min-height: 100svh;
     min-height: 100vh;
 }
 
 .document-shell {
+    min-height: 100svh;
+    min-height: 100dvh;
     padding: 28px 0 56px;
 }
 
