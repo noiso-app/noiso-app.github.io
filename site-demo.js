@@ -824,6 +824,66 @@ export function createNoisoDemo() {
         });
     }
 
+    function isEditableTarget(target) {
+        if (!(target instanceof Element)) {
+            return false;
+        }
+
+        if (target.closest("input, textarea, select, [contenteditable='true']")) {
+            return true;
+        }
+
+        return target instanceof HTMLElement && target.isContentEditable;
+    }
+
+    function isKeyboardShortcutTarget(target) {
+        if (!(target instanceof Element)) {
+            return false;
+        }
+
+        if (target === elements.demoSurface) {
+            return false;
+        }
+
+        return Boolean(target.closest("button, a, input, textarea, select, [contenteditable='true']"));
+    }
+
+    function bindDesktopKeyboardShortcuts() {
+        if (environment.isConstrainedMobileDevice) {
+            return;
+        }
+
+        window.addEventListener("keydown", (event) => {
+            if (
+                event.repeat ||
+                event.altKey ||
+                event.ctrlKey ||
+                event.metaKey ||
+                isEditableTarget(event.target) ||
+                isKeyboardShortcutTarget(event.target)
+            ) {
+                return;
+            }
+
+            if (event.key === " " || event.code === "Space") {
+                event.preventDefault();
+                void togglePlaybackByUser();
+                return;
+            }
+
+            if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                void setPresetByIndex(state.selectedPresetIndex - 1, { wrap: true });
+                return;
+            }
+
+            if (event.key === "ArrowRight") {
+                event.preventDefault();
+                void setPresetByIndex(state.selectedPresetIndex + 1, { wrap: true });
+            }
+        }, { capture: true });
+    }
+
     function bindEvents() {
         bindDiscreteButton(elements.playButton, () => {
             void togglePlaybackByUser();
@@ -878,6 +938,8 @@ export function createNoisoDemo() {
         elements.ambientAudio.addEventListener("play", syncPlaybackStateFromMediaElement);
         elements.ambientAudio.addEventListener("pause", syncPlaybackStateFromMediaElement);
         elements.ambientAudio.addEventListener("ended", syncPlaybackStateFromMediaElement);
+
+        bindDesktopKeyboardShortcuts();
     }
 
     function init() {
