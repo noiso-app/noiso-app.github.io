@@ -111,6 +111,10 @@ export function createNoisoDemo() {
         return TIMER_OPTIONS.find((option) => option.id === state.timerOptionId);
     }
 
+    function isLargeLoopAsset(audioPath) {
+        return /\.wav(?:$|\?)/i.test(audioPath);
+    }
+
     function saveSelectedPreset() {
         try {
             window.localStorage.setItem(STORAGE_KEYS.selectedPreset, currentPreset().id);
@@ -120,7 +124,9 @@ export function createNoisoDemo() {
     }
 
     function setPlaybackStatus(message) {
-        elements.playbackStatus.textContent = message;
+        if (elements.playbackStatus.textContent !== message) {
+            elements.playbackStatus.textContent = message;
+        }
     }
 
     function buildTitleTrack() {
@@ -148,7 +154,11 @@ export function createNoisoDemo() {
     }
 
     function warmAudioAsset(audioPath) {
-        if (environment.isConstrainedMobileDevice || audioRuntime.preloadedAudio.has(audioPath)) {
+        if (
+            environment.isConstrainedMobileDevice ||
+            isLargeLoopAsset(audioPath) ||
+            audioRuntime.preloadedAudio.has(audioPath)
+        ) {
             return;
         }
 
@@ -268,8 +278,15 @@ export function createNoisoDemo() {
     }
 
     function updatePresetAccessibility() {
-        elements.demoSurface.setAttribute("aria-valuetext", currentPreset().title);
-        elements.presetStatus.textContent = currentPreset().title;
+        const presetTitle = currentPreset().title;
+
+        if (elements.demoSurface.getAttribute("aria-valuetext") !== presetTitle) {
+            elements.demoSurface.setAttribute("aria-valuetext", presetTitle);
+        }
+
+        if (elements.presetStatus.textContent !== presetTitle) {
+            elements.presetStatus.textContent = presetTitle;
+        }
     }
 
     function updatePlaybackButton() {
