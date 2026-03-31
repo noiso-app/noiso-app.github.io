@@ -19,7 +19,7 @@ export const PRESETS = [
     {
         id: "mountain_cabin_in_snow",
         title: "Mountain Cabin in Snow",
-        audio: assetUrl("./assets/audio/mountain_cabin_in_snow.m4a"),
+        audio: assetUrl("./assets/audio/mountain_cabin_in_snow.wav"),
         background: assetUrl("./assets/backgrounds/mountain_cabin_in_snow_background.jpg"),
         colors: {
             bg1: "#050608",
@@ -40,7 +40,7 @@ export const PRESETS = [
     {
         id: "japanese_forest_at_night",
         title: "Japanese Forest at Night",
-        audio: assetUrl("./assets/audio/japanese_forest_at_night.m4a"),
+        audio: assetUrl("./assets/audio/japanese_forest_at_night.wav"),
         background: assetUrl("./assets/backgrounds/japanese_forest_at_night_background.jpg"),
         colors: {
             bg1: "#040705",
@@ -61,7 +61,7 @@ export const PRESETS = [
     {
         id: "sumatra_coast_after_dusk",
         title: "Sumatra Coast After Dusk",
-        audio: assetUrl("./assets/audio/sumatra_coast_after_dusk.m4a"),
+        audio: assetUrl("./assets/audio/sumatra_coast_after_dusk.wav"),
         background: assetUrl("./assets/backgrounds/sumatra_coast_after_dusk_background.jpg"),
         colors: {
             bg1: "#021015",
@@ -82,7 +82,7 @@ export const PRESETS = [
     {
         id: "rain_temple_courtyard",
         title: "Rain Temple Courtyard",
-        audio: assetUrl("./assets/audio/rain_temple_courtyard.m4a"),
+        audio: assetUrl("./assets/audio/rain_temple_courtyard.wav"),
         background: assetUrl("./assets/backgrounds/rain_temple_courtyard_background.jpg"),
         colors: {
             bg1: "#05070C",
@@ -103,7 +103,7 @@ export const PRESETS = [
     {
         id: "nordic_fjord_midnight",
         title: "Nordic Fjord Midnight",
-        audio: assetUrl("./assets/audio/nordic_fjord_midnight.m4a"),
+        audio: assetUrl("./assets/audio/nordic_fjord_midnight.wav"),
         background: assetUrl("./assets/backgrounds/nordic_fjord_midnight_background.jpg"),
         colors: {
             bg1: "#03060A",
@@ -124,7 +124,7 @@ export const PRESETS = [
     {
         id: "icelandic_hot_spring_at_night",
         title: "Icelandic Hot Spring At Night",
-        audio: assetUrl("./assets/audio/icelandic_hot_spring_at_night.m4a"),
+        audio: assetUrl("./assets/audio/icelandic_hot_spring_at_night.wav"),
         background: assetUrl("./assets/backgrounds/icelandic_hot_spring_at_night_background.jpg"),
         colors: {
             bg1: "#04080C",
@@ -145,7 +145,7 @@ export const PRESETS = [
     {
         id: "sahara_dunes_before_dawn",
         title: "Sahara Dunes Before Dawn",
-        audio: assetUrl("./assets/audio/sahara_dunes_before_dawn.m4a"),
+        audio: assetUrl("./assets/audio/sahara_dunes_before_dawn.wav"),
         background: assetUrl("./assets/backgrounds/sahara_dunes_before_dawn_background.jpg"),
         colors: {
             bg1: "#08070C",

@@ -30,7 +30,7 @@ The site is intentionally simple:
 - `site-demo.js` - landing page interaction logic, audio handling, timer behavior, and gesture handling
 - `site-config.js` - preset catalog, timer options, environment detection, and shared constants
 - `styles.css` - shared site styles
-- `assets/audio/` - bundled demo audio presets
+- `assets/audio/` - bundled demo audio presets (`.wav`, matched to the app assets for seamless looping)
 - `assets/backgrounds/` - atmospheric background images
 - `assets/screenshots/` - iPhone screenshots used on the landing page
 - `assets/icon/` - app icon asset for the site
