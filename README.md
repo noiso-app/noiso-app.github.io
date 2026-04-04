@@ -144,5 +144,6 @@ Avoid adding marketing copy that implies features the app does not have.
 
 ## Related Repositories
 
-- app source: `Noiso`
+- iOS app source: `Noiso-iOS`
+- Android app source: `Noiso-Android`
 - site source: `noiso-app.github.io`
